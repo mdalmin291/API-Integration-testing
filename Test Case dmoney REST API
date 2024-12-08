@@ -1,1 +1,207 @@
+1. Test Case ID: TC001
+Test Case Title: Admin creates an Agent.
+Preconditions: Admin credentials are valid.
+Test Steps:
+1. Log in as admin using admin@roadtocareer.net and 1234.
+2. Send a POST request to the API endpoint for creating an Agent.
+3. Verify the Agent is successfully created.
+Expected Result: Agent account is created with valid details and a unique ID.
+
+
+2. Test Case ID: TC002
+Test Case Title: Admin creates two random Customers.
+Preconditions: Admin credentials are valid.
+Test Steps:
+1. Log in as admin using admin@roadtocareer.net and 1234.
+2. Send POST requests to the API endpoint to create two Customers.
+3. Verify each Customer is successfully created with unique IDs.
+Expected Result: Two Customer accounts are created successfully.
+
+
+3. Test Case ID: TC003
+Test Case Title: Admin creates a Merchant.
+Preconditions: Admin credentials are valid.
+Test Steps:
+1. Log in as admin using admin@roadtocareer.net and 1234.
+2. Send a POST request to the API endpoint to create a Merchant.
+3. Verify the Merchant is successfully created.
+Expected Result: Merchant account is created successfully with a unique ID.
+
+4. Test Case ID: TC004
+Test Case Title: Deposit money from SYSTEM account to the Agent.
+Preconditions: Agent account exists.
+Test Steps:
+1 Log in as admin.
+2. Send a POST request to the deposit endpoint.
+**fromAc: SYSTEM
+**toAc: Agent
+**Amount: 1000 TK
+3.Verify the transaction status is success.
+Expected Result: The Agent’s balance increases by the deposit amount.
+
+5. Test Case ID: TC005
+Test Case Title: Agent deposits money to a Customer.
+Preconditions: Agent and Customer accounts exist with sufficient balance in Agent’s account.
+Test Steps:
+1. Log in as Agent.
+2. Send a POST request to the deposit endpoint.
+**fromAc: Agent
+**toAc: Customer
+**Amount: 500 TK
+3. Verify the transaction status is success.
+Expected Result: Customer’s balance increases by the deposit amount; Agent’s balance decreases.
+
+6. Test Case ID: TC006
+Test Case Title: Check the Agent’s balance.
+Preconditions: Agent account exists.
+Test Steps:
+1. Log in as Agent.
+2. Send a GET request to the balance-check endpoint.
+3. Verify the returned balance matches expected value.
+Expected Result: The Agent’s balance is accurate.
+
+7. Test Case ID: TC007
+Test Case Title: Send money from one Customer to another Customer.
+Preconditions: Both Customer accounts exist with sufficient balance in the sender’s account.
+Test Steps:
+1. Log in as the first Customer.
+2. Send a POST request to the transfer endpoint.
+** fromAc: Customer1
+** toAc: Customer2
+** Amount: 300 TK
+3. Verify the transaction status is success.
+Expected Result:
+Customer1’s balance decreases.
+Customer2’s balance increases.
+
+8. Test Case ID: TC008
+Test Case Title: Withdraw money from a Customer to the Agent.
+Preconditions: Customer account exists with sufficient balance.
+Test Steps:
+1. Log in as the Customer.
+2. Send a POST request to the withdrawal endpoint.
+** fromAc: Customer
+** toAc: Agent
+** Amount: 500 TK
+3. Verify the transaction status is success.
+Expected Result:
+Customer’s balance decreases.
+Agent’s balance increases.
+
+
+9. Test Case ID: TC009
+Test Case Title: Check the Customer’s balance.
+Preconditions: Customer account exists.
+Test Steps:
+1. Log in as the Customer.
+2. Send a GET request to the balance-check endpoint.
+3. Verify the returned balance matches expected value.
+Expected Result: Customer’s balance is accurate.
+
+10. Test Case ID: TC010
+Test Case Title: Verify Customer’s transaction statement by trnxId.
+Preconditions: Customer account exists with a valid transaction ID.
+Test Steps:
+1. Log in as the Customer.
+2. Send a GET request to the transaction statement endpoint with trnxId.
+3. Verify the returned details match the transaction.
+Expected Result: Transaction details are accurate.
+
+11. Test Case ID: TC011
+Test Case Title: Make a payment from the second Customer to the Merchant.
+Preconditions: Customer and Merchant accounts exist with sufficient balance in the Customer’s account.
+Test Steps:
+1. Log in as the second Customer.
+2. Send a POST request to the payment endpoint.
+** fromAc: Customer
+** toAc: Merchant
+** Amount: 1000 TK
+Verify the transaction status is success.
+Expected Result:
+Customer’s balance decreases.
+Merchant’s balance increases.
+
+12. Test Case ID: TC012
+Test Case Title: Second Customer checks balance and transaction statement.
+Preconditions: Customer account exists.
+Test Steps:
+1. Log in as the second Customer.
+2. Send GET requests to the balance-check and transaction statement endpoints.
+3. Verify the balance and transaction statement are accurate.
+Expected Result: Both balance and transaction statement match expected values.
+
+13. Test Case ID: TC013
+Test Case Title: Merchant checks balance.
+Preconditions: Merchant account exists.
+Test Steps:
+1. Log in as the Merchant.
+2. Send a GET request to the balance-check endpoint.
+3. Verify the balance matches expected value.
+Expected Result: Merchant’s balance is accurate.
+
+
+14. Test Case ID: TC014
+Test Case Title: Verify failure for insufficient balance during Agent to Customer deposit.
+Preconditions: Agent account exists but has insufficient balance.
+Test Steps:
+1. Log in as Agent.
+2. Send a POST request to the deposit endpoint.
+** fromAc: Agent
+** toAc: Customer
+** Amount: 20,000 TK (exceeding Agent's balance).
+3. Verify the transaction status is failure.
+Expected Result: Transaction fails with an appropriate error message (e.g., "Insufficient Balance").
+
+15.Test Case ID: TC015
+Test Case Title: Check invalid trnxId for transaction statement retrieval.
+Preconditions: Customer account exists, and an invalid trnxId is provided.
+Test Steps:
+1. Log in as the Customer.
+2. Send a GET request to the transaction statement endpoint with an invalid trnxId.
+3. Verify the response contains an appropriate error message (e.g., "Transaction not found").
+Expected Result: API responds with a 404 or relevant error code, and an error message is displayed.
+
+16. Test Case ID: TC016
+Test Case Title: Verify concurrent transactions do not cause balance inconsistency.
+Preconditions: Customer account exists with sufficient balance.
+Test Steps:
+1. Log in as the Customer.
+2. Simulate two simultaneous POST requests to the transfer endpoint:
+** Transaction 1: Transfer 300 TK to Customer2.
+** Transaction 2: Transfer 400 TK to Customer3.
+3. Verify that both transactions complete without conflict.
+Verify the Customer's final balance is consistent.
+Expected Result: Both transactions are processed correctly, and the balance is updated accurately without inconsistency.
+
+17. Test Case ID: TC017
+Test Case Title: Verify Merchant receives payment from multiple Customers.
+Preconditions: Merchant account exists with an initial balance of 0 TK.
+Test Steps:
+1. Log in as Customer1 and Customer2, respectively.
+2. Send separate POST requests to the payment endpoint:
+** Customer1 -> Merchant: 500 TK.
+** Customer2 -> Merchant: 700 TK.
+3. Log in as the Merchant and check balance.
+Expected Result: Merchant’s balance reflects the total payment (1200 TK) from both Customers.
+
+18.Test Case ID: TC018
+Test Case Title: Verify invalid account type during a transaction.
+Preconditions: Accounts exist, and an invalid fromAc or toAc is used.
+Test Steps:
+1. Log in as admin, Agent, or Customer.
+2. Send a POST request to any transaction endpoint (deposit, transfer, or withdrawal) with an invalid account type in fromAc or toAc.
+3. Verify the response includes an error.
+Expected Result: API responds with a 400 or relevant error code and an error message (e.g., "Invalid Account Type").
+
+
+
+
+
+
+
+
+
+
+
+
 
